@@ -49,8 +49,8 @@ def getLocalIP() -> str:
         else:
             logger.critical("platform not supported")
             raise Exception
-    except Exception:
-        exit("could not get local ip")
+    except Exception as ex:
+        exit("could not get local ip - {}".format(ex))
     return str()
 
 def getIpRange(local_ip) -> list:
