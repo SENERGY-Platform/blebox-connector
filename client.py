@@ -33,6 +33,9 @@ def pushReadings():
     while True:
         for device in DevicePool.devices().values():
             try:
+                response = http.get('http://{}/api/air/kick'.format(device.ip))
+                if response.status == 204:
+                    time.sleep(5)
                 response = http.get('http://{}/api/air/state'.format(device.ip))
                 if response.status == 200:
                     air_state = json.loads(response.body)
