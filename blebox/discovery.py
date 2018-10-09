@@ -22,9 +22,10 @@ try:
     from blebox.device import BleboxDevice
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
-from subprocess import call, DEVNULL
+from subprocess import call, check_output, DEVNULL
 from socket import gethostbyname, getfqdn
 from threading import Thread
+from platform import system
 import time, json
 
 logger = root_logger.getChild(__name__)
@@ -34,9 +35,22 @@ def ping(host) -> bool:
     return call(['ping', '-c', '1', '-t', '2', host], stdout=DEVNULL, stderr=DEVNULL) == 0
 
 def getLocalIP() -> str:
-    local_ip = gethostbyname(getfqdn())
-    if type(local_ip) is str and local_ip.count('.') == 3:
-        return local_ip
+    sys_type = system().lower()
+    try:
+        if sys_type is 'linux':
+            local_ip = check_output(['hostname', '-I']).decode()
+            local_ip = local_ip.replace(' ', '')
+            local_ip = local_ip.replace('\n', '')
+            return local_ip
+        elif sys_type is 'darwin':
+            local_ip = gethostbyname(getfqdn())
+            if type(local_ip) is str and local_ip.count('.') == 3:
+                return local_ip
+        else:
+            logger.critical("platform not supported")
+            raise Exception
+    except Exception:
+        exit("could not get local ip")
     return str()
 
 def getIpRange(local_ip) -> list:
