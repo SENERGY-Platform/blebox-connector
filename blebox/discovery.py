@@ -37,12 +37,12 @@ def ping(host) -> bool:
 def getLocalIP() -> str:
     sys_type = system().lower()
     try:
-        if sys_type is 'linux':
+        if 'linux' in sys_type:
             local_ip = check_output(['hostname', '-I']).decode()
             local_ip = local_ip.replace(' ', '')
             local_ip = local_ip.replace('\n', '')
             return local_ip
-        elif sys_type is 'darwin':
+        elif 'darwin' in sys_type:
             local_ip = gethostbyname(getfqdn())
             if type(local_ip) is str and local_ip.count('.') == 3:
                 return local_ip
