@@ -33,7 +33,7 @@ logger = root_logger.getChild(__name__)
 
 
 def ping(host) -> bool:
-    return call(['ping', '-c', '1', '-t', '2', host], stdout=DEVNULL, stderr=DEVNULL) == 0
+    return call(['ping', '-c', '2', '-t', '2', host], stdout=DEVNULL, stderr=DEVNULL) == 0
 
 def getLocalIP() -> str:
     sys_type = system().lower()
