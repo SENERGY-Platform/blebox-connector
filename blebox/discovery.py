@@ -20,6 +20,7 @@ try:
     from connector_client.client import Client
     from blebox.logger import root_logger
     from blebox.device import BleboxDevice
+    from blebox.configuration import SEPL_DEVICE_TYPE
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 from subprocess import call, check_output, DEVNULL
@@ -149,7 +150,7 @@ class Monitor(Thread):
             for new_device_id in new_devices:
                 name = unknown_devices[new_device_id].get('deviceName')
                 logger.info("found '{}' with id '{}'".format(name, new_device_id))
-                device = BleboxDevice(new_device_id, 'iot#b9baa8e6-7955-4dd9-9bdf-3885f3bfbf12', name, unknown_devices[new_device_id].get('ip'))
+                device = BleboxDevice(new_device_id, SEPL_DEVICE_TYPE, name, unknown_devices[new_device_id].get('ip'))
                 device.addTag('type', unknown_devices[new_device_id].get('type'))
                 if init:
                     DevicePool.add(device)
