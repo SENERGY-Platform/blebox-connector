@@ -52,7 +52,7 @@ def pushReadings():
                         )
             except Exception as ex:
                 logger.error(ex)
-        time.sleep(20)
+        time.sleep(300)
 
 readings_scraper = Thread(target=pushReadings, name="Scraper")
 
