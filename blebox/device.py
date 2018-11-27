@@ -16,7 +16,7 @@
 
 try:
     from blebox.logger import root_logger
-    from connector_client.device import Device
+    from connector_lib.device import Device
 except ImportError as ex:
     exit("{} - {}".format(__name__, ex.msg))
 

@@ -15,9 +15,9 @@
 """
 
 try:
-    from connector_client.modules.http_lib import Methods as http
-    from connector_client.modules.device_pool import DevicePool
-    from connector_client.client import Client
+    from connector_lib.modules.http_lib import Methods as http
+    from connector_lib.modules.device_pool import DevicePool
+    from connector_lib.client import Client
     from blebox.discovery import Monitor
     from blebox.logger import root_logger
 except ImportError as ex:
