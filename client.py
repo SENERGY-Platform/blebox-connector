@@ -59,5 +59,5 @@ readings_scraper = Thread(target=pushReadings, name="Scraper")
 
 if __name__ == '__main__':
     device_monitor = Monitor()
-    connector_client = Client(device_manager=DevicePool)
+    client_connector = Client(device_manager=DevicePool)
     readings_scraper.start()
