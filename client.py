@@ -15,44 +15,63 @@
 """
 
 
-from blebox import Monitor
-from blebox import root_logger
-from threading import Thread
-import json, time, datetime
+from blebox import Monitor, root_logger, DeviceManager, config
+from requests import get, exceptions
+from time import sleep
+import json, time, cc_lib
 
 
 logger = root_logger.getChild(__name__)
 
 
-def pushReadings():
-    while True:
-        for device in DevicePool.devices().values():
-            try:
-                #response = http.get('http://{}/api/air/kick'.format(device.ip))
-                #if response.status == 204:
-                #    time.sleep(5)
-                response = http.get('http://{}/api/air/state'.format(device.ip))
-                if response.status == 200:
-                    air_state = json.loads(response.body)
-                    for sensor in air_state['air']['sensors']:
-                        Client.event(
-                            device.id,
-                            'reading_{}'.format(sensor['type']),
-                            json.dumps({
-                                'value': sensor['value'],
-                                'unit': 'µg/m³',
-                                'time': '{}Z'.format(datetime.datetime.utcnow().isoformat())
-                            }),
-                            block=False
-                        )
-            except Exception as ex:
-                logger.error(ex)
-        time.sleep(300)
+device_manager = DeviceManager()
 
-readings_scraper = Thread(target=pushReadings, name="Scraper")
+
+def on_connect(client: cc_lib.client.Client):
+    devices = device_manager.devices
+    for device in devices.values():
+        try:
+            if device.reachable:
+                client.connectDevice(device, asynchronous=True)
+        except cc_lib.client.DeviceConnectError:
+            pass
+
+
+client_connector = cc_lib.client.Client()
+client_connector.setConnectClbk(on_connect)
+
+device_monitor = Monitor(device_manager, client_connector)
+
+
+def pushReadings():
+    msg = cc_lib.client.message.Message(str())
+    while True:
+        for device in device_manager.devices.values():
+            if device.reachable:
+                try:
+                    response = get(url="http://{}/{}".format(device.ip, config.Api.air_sensor_state))
+                    if response.status_code == 200:
+                        air_state = response.json()
+                        for sensor in air_state['air']['sensors']:
+                            msg.data = json.dumps(device.getService("reading_{}".format(sensor['type']), sensor['value']))
+                            client_connector.emmitEvent(
+                                cc_lib.client.message.Envelope(device, "reading_{}".format(sensor['type']), msg),
+                                asynchronous=True
+                            )
+                except exceptions.RequestException:
+                    logger.error("could not send request to '{}'".format(device.ip))
+                except Exception as ex:
+                    logger.error(ex)
+        time.sleep(300)
 
 
 if __name__ == '__main__':
-    device_monitor = Monitor()
-    client_connector = Client(device_manager=DevicePool)
-    readings_scraper.start()
+    while True:
+        try:
+            client_connector.initHub()
+            break
+        except cc_lib.client.HubInitializationError:
+            sleep(10)
+    client_connector.connect(reconnect=True)
+    device_monitor.start()
+    pushReadings()

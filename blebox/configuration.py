@@ -22,7 +22,16 @@ from os import getcwd
 
 
 @configuration
-class BridgeConf:
+class BleboxConf:
+
+    @section
+    class RuntimeEnv:
+        container = False
+
+    @section
+    class Api:
+        air_sensor_state = None
+        air_sensor_device = None
 
     @section
     class Senergy:
@@ -36,7 +45,7 @@ class BridgeConf:
         level = "info"
 
 
-config = BridgeConf('blebox.conf', getcwd())
+config = BleboxConf('blebox.conf', getcwd())
 
 
 if not all(

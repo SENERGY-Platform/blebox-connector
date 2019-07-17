@@ -15,17 +15,81 @@
 """
 
 
-__all__ = ()
+__all__ = ('BleboxAirSensor', 'device_type_map')
 
 
-from .logger import root_logger
-from cc_lib.device import Device
-
-logger = root_logger.getChild(__name__)
+from .configuration import config
+import cc_lib, datetime
 
 
-class BleboxDevice(Device):
-    def __init__(self, id, type, name, ip):
-        super().__init__(id, type, name)
+def mapReading(payload):
+    return {
+        'value': payload,
+        'unit': 'µg/m³',
+        'time': '{}Z'.format(datetime.datetime.utcnow().isoformat())
+    }
+
+
+class ReadingPM1(cc_lib.types.SensorService):
+    uri = config.Senergy.st_reading_pm1
+    name = "Reading pm 1"
+    description = "Reading for particulate matter between 0.3 and 1 μm."
+
+    @staticmethod
+    def task(payload):
+        return mapReading(payload)
+
+
+class ReadingPM25(cc_lib.types.SensorService):
+    uri = config.Senergy.st_reading_pm25
+    name = "Reading pm 2.5"
+    description = "Reading for particulate matter between 1 and 2.5 μm."
+
+    @staticmethod
+    def task(payload):
+        return mapReading(payload)
+
+
+class ReadingPM10(cc_lib.types.SensorService):
+    uri = config.Senergy.st_reading_pm10
+    name = "Reading pm 10"
+    description = "Reading for particulate matter between 2.5 and 10 μm."
+
+    @staticmethod
+    def task(payload):
+        return mapReading(payload)
+
+
+class BleboxAirSensor(cc_lib.types.Device):
+    uri = config.Senergy.dt_air_sensor
+    description = "Measure different sizes of air particles."
+    services = {
+        "reading_pm1": ReadingPM1,
+        "reading_pm2.5": ReadingPM25,
+        "reading_pm10": ReadingPM10
+    }
+
+    def __init__(self, id, name, ip=None):
+        self.id = id
+        self.name = name
         self.ip = ip
-        self.addTag('manufacturer', 'Blebox')
+        self.reachable = False
+        self.addTag('type', "airSensor")
+        self.addTag('manufacturer', "Blebox")
+
+    def getService(self, service, *args):
+        return super().getService(service).task(*args)
+
+    def __iter__(self):
+        items = (
+            ("name", self.name),
+            ("ip", self.ip),
+            ("reachable", self.reachable)
+        )
+        for item in items:
+            yield item
+
+
+device_type_map = {
+    "airSensor": BleboxAirSensor
+}
