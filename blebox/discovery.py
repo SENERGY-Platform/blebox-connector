@@ -18,15 +18,9 @@
 __all__ = ('Monitor', )
 
 
-try:
-    from connector_lib.modules.http_lib import Methods as http
-    from connector_lib.modules.device_pool import DevicePool
-    from connector_lib.client import Client
-    from blebox.logger import root_logger
-    from blebox.device import BleboxDevice
-    from blebox.configuration import SEPL_DEVICE_TYPE
-except ImportError as ex:
-    exit("{} - {}".format(__name__, ex.msg))
+from .logger import root_logger
+from .device import BleboxDevice
+from .configuration import config
 from subprocess import call, check_output, DEVNULL
 from socket import gethostbyname, getfqdn
 from threading import Thread
