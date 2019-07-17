@@ -19,11 +19,12 @@ from .configuration import *
 from .logger import *
 from .discovery import *
 from .device import *
-
+from .device_manager import *
 
 __all__ = (
     configuration.__all__,
     logger.__all__,
     discovery.__all__,
-    device.__all__
+    device.__all__,
+    device_manager.__all__
 )
