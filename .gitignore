@@ -2,3 +2,4 @@ __pycache__
 client-connector
 blebox.conf
 .venv
+cc-lib
