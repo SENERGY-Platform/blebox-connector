@@ -14,34 +14,37 @@
    limitations under the License.
 """
 
-if __name__ == '__main__':
-    exit('Please use "client.py"')
-
-import os, inspect, configparser
-
-conf_path = os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe()))[0])
-conf_file = 'blebox.conf'
-
-config = configparser.ConfigParser()
+__all__ = ('config', )
 
 
-if not os.path.isfile(os.path.join(conf_path, conf_file)):
-    print('No config file found')
-    config['SEPL'] = {
-        'device_type': ''
-    }
-    with open(os.path.join(conf_path, conf_file), 'w') as cf:
-        config.write(cf)
-    exit("Created blank config file at '{}'".format(conf_path))
+from simple_conf import configuration, section
+from os import getcwd
 
 
-try:
-    config.read(os.path.join(conf_path, conf_file))
-except Exception as ex:
-    exit(ex)
+@configuration
+class BridgeConf:
+
+    @section
+    class Senergy:
+        dt_air_sensor = None
+        st_reading_pm1 = None
+        st_reading_pm25 = None
+        st_reading_pm10 = None
+
+    @section
+    class Logger:
+        level = "info"
 
 
-SEPL_DEVICE_TYPE = config['SEPL']['device_type']
+config = BridgeConf('blebox.conf', getcwd())
 
-if not SEPL_DEVICE_TYPE:
-    exit('Please provide a SEPL device type')
+
+if not all(
+        (
+                config.Senergy.dt_air_sensor,
+                config.Senergy.st_reading_pm1,
+                config.Senergy.st_reading_pm25,
+                config.Senergy.st_reading_pm10
+        )
+):
+    exit('Please provide a SENERGY device and service types')
