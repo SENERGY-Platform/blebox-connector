@@ -15,17 +15,15 @@
 """
 
 
-__all__ = ()
+from .configuration import *
+from .logger import *
+from .discovery import *
+from .device import *
 
 
-from .logger import root_logger
-from cc_lib.device import Device
-
-logger = root_logger.getChild(__name__)
-
-
-class BleboxDevice(Device):
-    def __init__(self, id, type, name, ip):
-        super().__init__(id, type, name)
-        self.ip = ip
-        self.addTag('manufacturer', 'Blebox')
+__all__ = (
+    configuration.__all__,
+    logger.__all__,
+    discovery.__all__,
+    device.__all__
+)

@@ -14,6 +14,10 @@
    limitations under the License.
 """
 
+
+__all__ = ('Monitor', )
+
+
 try:
     from connector_lib.modules.http_lib import Methods as http
     from connector_lib.modules.device_pool import DevicePool
