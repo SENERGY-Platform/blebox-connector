@@ -55,7 +55,7 @@ def pushReadings():
                         for sensor in air_state['air']['sensors']:
                             msg.data = json.dumps(device.getService("reading_{}".format(sensor['type']), sensor['value']))
                             client_connector.emmitEvent(
-                                cc_lib.client.message.Envelope(device, "reading_{}".format(sensor['type']), msg),
+                                cc_lib.client.message.EventEnvelope(device, "reading_{}".format(sensor['type']), msg),
                                 asynchronous=True
                             )
                 except exceptions.RequestException:
