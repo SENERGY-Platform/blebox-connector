@@ -3,4 +3,5 @@ client-connector
 blebox.conf
 .venv
 cc-lib
-devices.sqllite3
+devices.sqlite3
+storage
