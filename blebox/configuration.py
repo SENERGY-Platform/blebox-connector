@@ -18,8 +18,10 @@ __all__ = ('config', )
 
 
 from simple_conf import configuration, section
-from os import getcwd
+from os import getcwd, makedirs
+from os.path import exists as path_exists
 
+user_dir = '{}/storage'.format(getcwd())
 
 @configuration
 class BleboxConf:
@@ -45,7 +47,10 @@ class BleboxConf:
         level = "info"
 
 
-config = BleboxConf('blebox.conf', getcwd())
+if not path_exists(user_dir):
+    makedirs(user_dir)
+
+config = BleboxConf('blebox.conf', user_dir)
 
 
 if not all(
