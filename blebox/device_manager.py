@@ -34,7 +34,7 @@ class DeviceManager:
     def __init__(self):
         self.__device_pool = dict()
         self.__lock = Lock()
-        self.__db_path = path.join(getcwd(),"{}.sqllite3".format("devices"))
+        self.__db_path = path.join(getcwd(),"storage/devices.sqlite3")
         with sqlliteConnect(self.__db_path) as conn:
             conn.execute("CREATE TABLE IF NOT EXISTS devices (id TEXT PRIMARY KEY UNIQUE, name TEXT, type TEXT)")
         conn.close()
