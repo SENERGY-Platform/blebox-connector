@@ -10,7 +10,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 RUN mkdir cc-lib
-RUN touch blebox.conf
-RUN touch devices.sqllite3
+RUN mkdir storage
 
 CMD [ "python", "./client.py"]
