@@ -63,8 +63,6 @@ class BleboxAirSensor(cc_lib.types.Device):
         self.name = name
         self.ip = ip
         self.reachable = False
-        self.addTag('type', "airSensor")
-        self.addTag('manufacturer', "Blebox")
 
     def getService(self, service, *args):
         return super().getService(service).task(*args)
