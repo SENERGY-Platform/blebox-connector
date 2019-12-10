@@ -43,7 +43,7 @@ def getLocalIP() -> str:
         if config.RuntimeEnv.container:
             host_ip = getenv("HOST_IP")
             if not host_ip:
-                raise Exception
+                raise Exception("environment variable 'HOST_IP' not set")
             return host_ip
         else:
             sys_type = system().lower()
@@ -57,10 +57,10 @@ def getLocalIP() -> str:
                 if type(local_ip) is str and local_ip.count('.') == 3:
                     return local_ip
             else:
-                logger.critical("platform not supported")
-                raise Exception
+                raise Exception("platform not supported")
     except Exception as ex:
-        exit("could not get local ip - {}".format(ex))
+        logger.critical("could not get local ip - {}".format(ex))
+        exit()
 
 
 def getIpRange(local_ip) -> list:
