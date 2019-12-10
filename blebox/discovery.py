@@ -39,11 +39,14 @@ def ping(host) -> bool:
 
 
 def getLocalIP() -> str:
-    if config.RuntimeEnv.container:
-        return getenv("HOST_IP")
-    else:
-        sys_type = system().lower()
-        try:
+    try:
+        if config.RuntimeEnv.container:
+            host_ip = getenv("HOST_IP")
+            if not host_ip:
+                raise Exception
+            return host_ip
+        else:
+            sys_type = system().lower()
             if 'linux' in sys_type:
                 local_ip = check_output(['hostname', '-I']).decode()
                 local_ip = local_ip.replace(' ', '')
@@ -56,9 +59,8 @@ def getLocalIP() -> str:
             else:
                 logger.critical("platform not supported")
                 raise Exception
-        except Exception as ex:
-            exit("could not get local ip - {}".format(ex))
-    return str()
+    except Exception as ex:
+        exit("could not get local ip - {}".format(ex))
 
 
 def getIpRange(local_ip) -> list:
