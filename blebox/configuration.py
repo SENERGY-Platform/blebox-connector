@@ -38,9 +38,6 @@ class BleboxConf:
     @section
     class Senergy:
         dt_air_sensor = None
-        st_reading_pm1 = None
-        st_reading_pm25 = None
-        st_reading_pm10 = None
 
     @section
     class Logger:
@@ -53,12 +50,5 @@ if not path_exists(user_dir):
 config = BleboxConf('blebox.conf', user_dir)
 
 
-if not all(
-        (
-                config.Senergy.dt_air_sensor,
-                config.Senergy.st_reading_pm1,
-                config.Senergy.st_reading_pm25,
-                config.Senergy.st_reading_pm10
-        )
-):
+if not all((config.Senergy.dt_air_sensor, )):
     exit('Please provide a SENERGY device and service types')

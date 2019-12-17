@@ -30,30 +30,24 @@ def mapReading(payload):
     }
 
 
-class ReadingPM1(cc_lib.types.SensorService):
-    uri = config.Senergy.st_reading_pm1
-    name = "Reading pm 1"
-    description = "Reading for particulate matter between 0.3 and 1 μm."
+class ReadingPM1(cc_lib.types.Service):
+    local_id = "reading_pm1"
 
     @staticmethod
     def task(payload):
         return mapReading(payload)
 
 
-class ReadingPM25(cc_lib.types.SensorService):
-    uri = config.Senergy.st_reading_pm25
-    name = "Reading pm 2.5"
-    description = "Reading for particulate matter between 1 and 2.5 μm."
+class ReadingPM25(cc_lib.types.Service):
+    local_id = "reading_pm2.5"
 
     @staticmethod
     def task(payload):
         return mapReading(payload)
 
 
-class ReadingPM10(cc_lib.types.SensorService):
-    uri = config.Senergy.st_reading_pm10
-    name = "Reading pm 10"
-    description = "Reading for particulate matter between 2.5 and 10 μm."
+class ReadingPM10(cc_lib.types.Service):
+    local_id = "reading_pm10"
 
     @staticmethod
     def task(payload):
@@ -61,21 +55,14 @@ class ReadingPM10(cc_lib.types.SensorService):
 
 
 class BleboxAirSensor(cc_lib.types.Device):
-    uri = config.Senergy.dt_air_sensor
-    description = "Measure different sizes of air particles."
-    services = {
-        "reading_pm1": ReadingPM1,
-        "reading_pm2.5": ReadingPM25,
-        "reading_pm10": ReadingPM10
-    }
+    device_type_id = config.Senergy.dt_air_sensor
+    services = (ReadingPM1, ReadingPM25, ReadingPM10)
 
     def __init__(self, id, name, ip=None):
         self.id = id
         self.name = name
         self.ip = ip
         self.reachable = False
-        self.addTag('type', "airSensor")
-        self.addTag('manufacturer', "Blebox")
 
     def getService(self, service, *args):
         return super().getService(service).task(*args)
