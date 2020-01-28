@@ -18,7 +18,13 @@
 from blebox import Monitor, root_logger, DeviceManager, config
 from requests import get, exceptions
 from time import sleep
-import json, time, cc_lib
+import json, time, random, cc_lib
+
+
+if config.RuntimeEnv.max_start_delay > 0:
+    delay = random.randint(1, config.RuntimeEnv.max_start_delay)
+    print("delaying start for {}s".format(delay))
+    time.sleep(delay)
 
 
 logger = root_logger.getChild(__name__)
