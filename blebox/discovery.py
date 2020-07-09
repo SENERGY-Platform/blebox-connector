@@ -113,6 +113,8 @@ class Monitor(Thread):
                 response = get(url="http://{}/{}".format(host, config.Api.air_sensor_device), timeout=5)
                 if response.status_code == 200 and 'blebox' in response.headers.get('Server'):
                     host_info = response.json()
+                    if "device" in host_info.keys():
+                        host_info = host_info.get("device")
                     valid_hosts[host_info.get('id')] = (
                         {
                             "name": host_info.get("deviceName"),
